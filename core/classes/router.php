@@ -22,29 +22,34 @@
 		}
 
 		private function routePart($route){
-			if(is_array($route)){
-				$route = $route['url'];
-				$parts = explode("/", $route);
+			
+			return explode("/", $route);
+		}
+
+		private function isBasePath($path){
+
+			if(basename($path)=='index.php'){
+				return true;
 			}
-			return $parts;
+			else{
+				return false;
+			}
 		}
 
 		private function uri($part){
 			$parts = explode("/", $_SERVER['REQUEST_URI']);	
-			$path_name = explode("/", $_SERVER['SCRIPT_FILENAME']);
-			array_splice($parts, count($parts)-2, 0, end($path_name));
-			echo "<pre>";
-			print_r($parts);
-			if($parts[1] == $GLOBALS['config']['path']['index']){
-			print_r($parts);
-				$part++;
+			$self_parts = explode("/", $_SERVER['PHP_SELF']);
+			if(count($parts) == count($self_parts)){
+				return "";
 			}
-			echo $_SERVER['REQUEST_URI'];
-			return isset($parts[$part])?$parts[$part]:"";
+			if(count($parts) > count($self_parts)){
+				return isset($parts[count($parts)-$part])?$parts[count($parts)-$part]:"";
+			}
 		}
 
 		private function findRoute(){
 			foreach($this->routes as $route){
+
 				$parts = $this->routePart($route);
 				$allMatch = true;
 				foreach ($parts as $key => $value) {
@@ -58,12 +63,11 @@
 					return $route;
 				}
 			}
-			$defaultController = $this->uri(1);
-			$defaultMethod = $this->uri(2);
+			$defaultController = $this->uri(2);
+			$defaultMethod = $this->uri(1);
 
 
-			echo $defaultMethod."<br>";
-			echo $defaultController;
+
 			if($defaultController == "" ){
 				$defaultController = $GLOBALS['config']['defaults']['controller'];
 			}
@@ -75,7 +79,6 @@
 				'controller' =>	$defaultController,
 				'method'	 =>	$defaultMethod
 			);
-			print_r($route);
 			return $route;
 		}
 	}
