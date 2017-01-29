@@ -14,7 +14,9 @@
 								'controller'=>'main',
 								'method'	=>'index'
 							),
-		'routes'		=>array(),
+		'routes'		=>array(
+								'main/exits'
+							),
 		'database'		=>array(
 								'hostname'	=>'localhost',
 								'username'	=>'root',
